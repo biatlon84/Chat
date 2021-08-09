@@ -25,7 +25,7 @@ public class Sand_Thr extends Thread {
 				}
 			}
 			try {
-				Thread.currentThread().sleep(1000);
+				Thread.currentThread().sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

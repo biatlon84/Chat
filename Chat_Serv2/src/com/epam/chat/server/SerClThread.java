@@ -2,8 +2,6 @@ package com.epam.chat.server;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,8 +15,10 @@ import java.text.SimpleDateFormat;
 public class SerClThread extends Thread {
 
 	public Socket clientDialog;
-	BufferedReader inn;
-	BufferedWriter outn;
+	// BufferedReader inn;
+	// BufferedWriter outn;
+	OutputStream outSClient;
+	DataInputStream inSClient;
 	public boolean flagErr = false;
 	public boolean sended = false;
 	int indx;
@@ -31,18 +31,18 @@ public class SerClThread extends Thread {
 	public void run() {
 		try {
 			String ww = "";
-			OutputStream datO = new DataOutputStream(new BufferedOutputStream(clientDialog.getOutputStream()));
+			outSClient = new DataOutputStream(new BufferedOutputStream(clientDialog.getOutputStream()));
 			InputStream in = clientDialog.getInputStream();
-			DataInputStream din = new DataInputStream(new BufferedInputStream(in));
+			inSClient = new DataInputStream(new BufferedInputStream(in));
 			while (!clientDialog.isClosed()) {
 				ww = "";
 				byte fl = 0;
-				long l = 0;
+				// long l = 0;
 				byte[] b = new byte[1024];
 				byte[] q = new byte[8];
-				byte[] k = new byte[1011];
-				Date dat;
-				int num = din.read(b);
+				// byte[] k = new byte[1011];
+				// Date dat;
+				int num = inSClient.read(b);// waiting
 
 				fl = b[0];
 				b[0] = 0;
@@ -52,7 +52,7 @@ public class SerClThread extends Thread {
 						q[i] = b[i];
 					}
 					SimpleDateFormat fo = new SimpleDateFormat("HH:mm:ss EEEE");
-					Date da = new Date(Heap.bytesToLong(q, 0) + 700000);
+					Date da = new Date(Heap.bytesToLong(q, 0) + 700000);// local time
 					if (Heap.bytesToLong(q, 0) != 0)
 						System.out.println(fo.format(da));
 				}
@@ -68,41 +68,39 @@ public class SerClThread extends Thread {
 						if (b[i] != 0)
 							ww = ww + (char) b[i];
 					}
-
-					Heap.ww = ww;
-					if (ww.equalsIgnoreCase("quit")) {
-						System.out.println("Main Server initiate exiting...");
-						inn.close();
-						outn.close();
-						clientDialog.close();
-						break;
-					}
+					/*
+					 * Heap.ww = ww; if (ww.equalsIgnoreCase("quit")) {
+					 * System.out.println("Main Server initiate exiting..."); inSClient.close();
+					 * outSClient.close(); clientDialog.close(); break; }
+					 */
 					System.out.println("TXT RES>" + ww);
 				}
 				Heap.last = fl;
-//--------------------------------------------- Sending
-
 			}
-			inn.close();
-			outn.close();
-			clientDialog.close();
-			System.out.println("Client disconnected");
 			flagErr = false;
 		} catch (SocketException e) {
 			/// e.printStackTrace();
 			flagErr = true;
 			System.out.println("SocketExceptionRUN");
-			// indx = Heap.pull1.indexOf(this);
-			// Heap.pull1.remove(indx);
 		} catch (IOException e) {
 			System.out.println("IOExceptionRUN");
-			// indx = Heap.pull1.indexOf(this);
-			/// Heap.pull1.remove(indx);
+			;
 			flagErr = true;
+		} finally {
+			try {
+				inSClient.close();
+				outSClient.close();
+				clientDialog.close();
+			} catch (IOException e) {
+				System.out.println("Ошибка закрытия ");
+			}
+
+			System.out.println("Client disconnected");
 		}
 
 	}
 
+	// --------------------------------------------- Sending
 	public void sendT(String ss, byte fl, Socket clientDialog) {
 
 		byte[] b = new byte[1024];
@@ -135,17 +133,20 @@ public class SerClThread extends Thread {
 			b[0] = fl;
 			datO.write(b);
 			datO.flush();
-			System.out.println(Heap.pull1.indexOf(this));
+			// System.out.println(Heap.pull1.indexOf(this));
 			sended = true;
 		} catch (IOException e) {
 			System.out.println("IOExceptionST");
-			indx = Heap.pull1.indexOf(this);
-			Heap.pull1.remove(indx);
+			try {
+				inSClient.close();
+				outSClient.close();
+				clientDialog.close();
+			} catch (IOException ee) {
+				System.out.println("Ошибка закрытия ");
+			}
 			flagErr = true;
 		} catch (NullPointerException e) {
 			System.out.println("NullPointerEST");
-			// indx = Heap.pull1.indexOf(this);
-			// Heap.pull1.remove(indx);
 			flagErr = true;
 		}
 

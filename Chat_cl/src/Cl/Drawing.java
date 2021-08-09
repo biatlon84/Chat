@@ -12,9 +12,6 @@ public class Drawing extends Canvas {
 	public void paint(Graphics g) {
 		int XS, YS;
 		int i = 0;
-		g.fillOval(-40, -40, 150, 250);
-		g.setColor(Color.BLUE);
-		mickey(g, half);
 		g.setColor(Color.white);
 		store.cu = 0;
 		store.rPos();
@@ -41,31 +38,9 @@ public class Drawing extends Canvas {
 		}
 	}
 
-	// @Override
-	public void mickey(Graphics g, Rectangle bb) {
-		boxOval(g, bb);
-
-		int dx = bb.width / 2;
-		int dy = bb.height / 2;
-		Rectangle half = new Rectangle(bb.x, bb.y, dx, dy);
-
-		half.translate(-dx / 2, -dy / 2);
-		boxOval(g, half);
-
-		half.translate(dx * 2, 0);
-		boxOval(g, half);
-	}
-
-	public void boxOval(Graphics g, Rectangle bb) {
-		g.fillOval(bb.x, bb.y, bb.width, bb.height);
-	}
-
 	public void ref(Graphics g) {
 		int XS, YS;
 		int i = 0;
-		g.fillOval(-40, -40, 150, 250);
-		g.setColor(Color.BLUE);
-		mickey(g, half);
 		g.setColor(Color.white);
 		store.cu = 0;
 		store.rPos();
@@ -82,7 +57,6 @@ public class Drawing extends Canvas {
 			g.drawLine(store.xx, store.yy, XS, YS);
 			XS = store.xx;
 			YS = store.yy;
-
 		}
 		if (i == 300) {
 			store.cu = 0;

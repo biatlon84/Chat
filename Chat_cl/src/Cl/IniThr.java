@@ -8,7 +8,7 @@ public class IniThr extends Thread {
 		store.soccc.Socin();
 		while (fa) {
 			try {
-				Thread.currentThread().sleep(1000);
+				Thread.currentThread().sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

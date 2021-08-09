@@ -11,7 +11,7 @@ public class Factory_Thread extends Thread {
 		try {
 			ServerSocket server = new ServerSocket(7728);
 			while (!server.isClosed()) {
-				Socket client = server.accept();
+				Socket client = server.accept();// waiting
 
 				SerClThread threadC = new SerClThread(client);
 
